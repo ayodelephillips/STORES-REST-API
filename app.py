@@ -20,7 +20,8 @@ from db import db
  resource are usually mapped to db table
 """
 app = Flask(__name__)  # flask app with url routes/endpoints
-app.config['SQLALCHEMY_DATABASE_URI'] = os.get('DATABASE_URL', 'sqlite:///data.db') # either get the postgres fromm heroku or the sqlite db. we read from config vars 
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.get('DATABASE_URL', 'sqlite:///data.db') # either get the postgres fromm heroku or the sqlite db. we read from config vars 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' # either get the postgres fromm heroku or the sqlite db. we read from config vars 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # turn off flask alchemy modification tracker, not sql alchemy modif tracker. we are changing the extensions behaviour
 app.secret_key = "phillips"
 api = Api(app)  # allows us add resources, and state whether we can GET or POST on the resource. api works with resource and every resource must be a class

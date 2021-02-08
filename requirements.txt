@@ -4,4 +4,4 @@ Flask-RESTful==0.3.8
 SQLAlchemy==1.3.22
 Flask-SQLAlchemy==2.4.4
 uwsgi
-psycopg2  # to connect with postgres
+psycopg2
