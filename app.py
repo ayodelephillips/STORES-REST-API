@@ -36,10 +36,10 @@ api = Api(app)  # allows us add resources, and state whether we can GET or POST 
         # config JWT token to expire within half an hour
     #app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
 
-@app.before_first_request
-def create_tables():
-    """create the tables before the first request. it uses the model imports e.g resources.store"""
-    db.create_all()
+# @app.before_first_request
+# def create_tables():
+#     """create the tables before the first request. it uses the model imports e.g resources.store"""
+#     db.create_all()
 
 jwt = JWT(app, authenticate, identity) 
 
