@@ -1,0 +1,12 @@
+CRUD Flask REST API of a store
+
+
+actions include 
+
+# create/delete a store.
+# retrieve a list of stores and items
+# create a store item
+# delete a store item
+# update a store item
+# register a user
+# validate a user using JWT auth endpoint

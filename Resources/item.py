@@ -72,7 +72,7 @@ class Item(Resource):
         
         
         if item is None:
-            item = ItemModel(name, data['price'], data['store_id'])
+            item = ItemModel(name, **data)
         else:
             item.price = data['price']
 
