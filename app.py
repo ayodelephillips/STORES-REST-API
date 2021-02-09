@@ -20,9 +20,9 @@ from db import db
  resource are usually mapped to db table
 """
 app = Flask(__name__)  # flask app with url routes/endpoints
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' # either get the postgres fromm heroku or the sqlite db. we read from config vars 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' # either get the postgres fromm heroku or the sqlite db. we read from config vars 
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # turn off flask alchemy modification tracker, not sql alchemy modif tracker. we are changing the extensions behaviour
 app.secret_key = "phillips"
