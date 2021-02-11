@@ -1,5 +1,5 @@
 """ 
-This file allows for creationof the tables when run by the deployed platform
+This file allows for creationof the tables when run by the deployed platform heroku
 """
 
 from app import app

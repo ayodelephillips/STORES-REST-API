@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_restful import Api 
-from flask_jwt import JWT
+from flask_jwt_extended import JWTManager  # use jwt extended instead of jwt
 from security import authenticate, identity
 
 from Resources.user import UserRegister
@@ -45,7 +45,7 @@ api = Api(app)  # allows us add resources, and state whether we can GET or POST 
 #     """create the tables before the first request. it uses the model imports e.g resources.store"""
 #     db.create_all()
 
-jwt = JWT(app, authenticate, identity) 
+jwt = JWTManager(app)  # doesn't create auth end point automatically
 
 
 api.add_resource(Store, '/store/<string:name>')
