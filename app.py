@@ -1,8 +1,7 @@
 import os
 from flask import Flask
 from flask_restful import Api 
-from flask_jwt_extended import JWTManager
-#from flask_jwt import JWT   # we are not using jwt so, this is commented
+from flask_jwt import JWT
 from security import authenticate, identity
 
 from Resources.user import UserRegister, User
@@ -24,7 +23,6 @@ app = Flask(__name__)  # flask app with url routes/endpoints
 
 # either get the postgres fromm heroku or the sqlite db. we read from config vars 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' 
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # turn off flask alchemy modification tracker, not sql alchemy modif tracker. we are changing the extensions behaviour
 app.config['PROPAGATE_EXCEPTIONS'] = True # flask extensions like jwt can raise their own errors
@@ -48,8 +46,7 @@ def create_tables():
     """create the tables before the first request. it uses the model imports e.g resources.store"""
     db.create_all()
 
-#jwt = JWT(app, authenticate, identity) 
-jwt = JWTManager(app) # not creating /auth endpoint
+jwt = JWT(app, authenticate, identity) 
 
 
 api.add_resource(Store, '/store/<string:name>')
