@@ -5,10 +5,10 @@ from flask_jwt import JWT
 from security import authenticate, identity
 
 from Resources.user import UserRegister, User
-from Resources.item import  Item, ItemList
-from Resources.store import  Store, StoreList
+from Resources.item import Item, ItemList
+from Resources.store import Store, StoreList
 
-#sql alchemy
+# sql alchemy
 from db import db
 
 # reqparse ensures only some elements can be passed in through the json payload. 
@@ -25,7 +25,7 @@ app = Flask(__name__)  # flask app with url routes/endpoints
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # turn off flask alchemy modification tracker, not sql alchemy modif tracker. we are changing the extensions behaviour
-app.config['PROPAGATE_EXCEPTIONS'] = True # flask extensions like jwt can raise their own errors
+app.config['PROPAGATE_EXCEPTIONS'] = True  # flask extensions like jwt can raise their own errors
 app.secret_key = "phillips"
 api = Api(app)  # allows us add resources, and state whether we can GET or POST on the resource. api works with resource and every resource must be a class
 
