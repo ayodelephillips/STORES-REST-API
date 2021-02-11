@@ -4,7 +4,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager  # use jwt extended instead of jwt
 from security import authenticate, identity
 
-from Resources.user import UserRegister
+from Resources.user import UserRegister, User
 from Resources.item import  Item, ItemList
 from Resources.store import  Store, StoreList
 
@@ -20,11 +20,12 @@ from db import db
  resource are usually mapped to db table
 """
 app = Flask(__name__)  # flask app with url routes/endpoints
+
+# either get the postgres fromm heroku or the sqlite db. we read from config vars 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db' # either get the postgres fromm heroku or the sqlite db. we read from config vars 
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # turn off flask alchemy modification tracker, not sql alchemy modif tracker. we are changing the extensions behaviour
+app.config['PROPAGATE_EXCEPTIONS'] = True # flask extensions like jwt can raise their own errors
 app.secret_key = "phillips"
 api = Api(app)  # allows us add resources, and state whether we can GET or POST on the resource. api works with resource and every resource must be a class
 
@@ -37,13 +38,13 @@ api = Api(app)  # allows us add resources, and state whether we can GET or POST 
     # app.config['JWT_AUTH_URL_RULE'] = '/login'   
         # config JWT to expire within half an hour
     #app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
-        # config JWT token to expire within half an hour
-    #app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
 
-# @app.before_first_request
-# def create_tables():
-#     """create the tables before the first request. it uses the model imports e.g resources.store"""
-#     db.create_all()
+
+# this will be hashed before deployment
+@app.before_first_request
+def create_tables():
+    """create the tables before the first request. it uses the model imports e.g resources.store"""
+    db.create_all()
 
 jwt = JWTManager(app)  # doesn't create auth end point automatically
 
@@ -53,6 +54,7 @@ api.add_resource(StoreList, '/stores')
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
 api.add_resource(UserRegister, '/register')
+api.add_resource(User, '/user/<int:user_id>')
 
 
 

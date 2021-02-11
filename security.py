@@ -1,4 +1,4 @@
-"""contains in memory table of registered users """
+"""contains methods used by JWT"""
 from werkzeug.security import safe_str_cmp  # safer way to compare strings
 from models.user import UserModel
 
@@ -11,7 +11,7 @@ def authenticate(username, password):
 
 def identity(payload):
     """ this function is unique to flask jwt extension. payload is content of jwt token"""
-    user_id = payload['identity']
+    user_id = payload['identity']  # if authenticate fn succeeds, then the id is encrypted and passed into this identity function
     return UserModel.find_by_id(user_id)
 
 

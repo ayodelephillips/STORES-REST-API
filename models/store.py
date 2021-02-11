@@ -16,12 +16,21 @@ class StoreModel(db.Model):
 
     def json(self):
         """ return a json rep(dictionary) of the model. because lazy is dynamic, we go to the table anytime we call json """
-        return {'name': self.name, 'items': [item.json() for item in self.items.all()]}  # because lazy is dynamic, we use .all() to retrieve from querybuilder
+        return {
+            'id': self.id,
+            'name': self.name, 
+            'items': [item.json() for item in self.items.all()]
+        }  # because lazy is dynamic, we use .all() to retrieve from querybuilder
 
     @classmethod
     def find_by_name(cls, name):
         """ return StoreModel object containing the name and price """
         return cls.query.filter_by(name=name).first()  # select* from items where name=name LIMIT 1
+
+    @classmethod
+    def find_all(cls):
+        """ Get all the stores """
+        return cls.query.all()
 
     def save_to_db(self):
         """insert an object into the db or update preexisting object """

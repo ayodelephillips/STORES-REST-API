@@ -24,3 +24,12 @@ class UserModel(db.Model):
     def find_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
 
+    def json(self):
+        return {
+            'id':self.id,
+            'username':self.username
+        }
+
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()
