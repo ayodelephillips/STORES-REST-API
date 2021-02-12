@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from flask_jwt import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_claims
 from models.item import ItemModel
 
 class Item(Resource):
@@ -19,7 +19,7 @@ class Item(Resource):
                         help="Every item requires a store id.")
 
 
-    @jwt_required()
+    @jwt_required
     def get(self, name):
         """
         get the item using name. where name is unique
@@ -52,9 +52,15 @@ class Item(Resource):
         return item.json(), 201  # item is a piece of json data. 201 means the task was completed and the item was created. 202 code means accepted, and is used when delaying the creation
     
     
-    @jwt_required()
+    @jwt_required
     def delete(self, name):
         """ DEL  /item/<name> """
+        # get data from request, extract jwt coming into the request and ensure only admin user can delete
+        claims = get_jwt_claims()
+        print("claims is {}".format(claims))
+        if not claims['is_admin']:
+            return {'message': 'Admin privilege required'}, 401
+
         item = ItemModel.find_by_name(name)
         if item:
             item.delete_from_db()

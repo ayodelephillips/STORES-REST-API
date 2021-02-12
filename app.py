@@ -4,7 +4,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager  # use jwt extended instead of jwt
 from security import authenticate, identity
 
-from Resources.user import UserRegister, User
+from Resources.user import UserRegister, User, UserLogin
 from Resources.item import  Item, ItemList
 from Resources.store import  Store, StoreList
 
@@ -26,7 +26,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:/
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # turn off flask alchemy modification tracker, not sql alchemy modif tracker. we are changing the extensions behaviour
 app.config['PROPAGATE_EXCEPTIONS'] = True # flask extensions like jwt can raise their own errors
-app.secret_key = "phillips"
+app.secret_key = "phillips"  # we can use app.config['JWT_SECRET_KEY']
 api = Api(app)  # allows us add resources, and state whether we can GET or POST on the resource. api works with resource and every resource must be a class
 
 """
@@ -34,8 +34,8 @@ api = Api(app)  # allows us add resources, and state whether we can GET or POST 
 # the request to the /auth i.e authenticate returns a jtw token which can be used in next request
 # when we send the jwt token to next request, it calls identity function, gets user id and correct user with the jw token
 """
-        # change the default '/auth' endpoint to '/login'
-    # app.config['JWT_AUTH_URL_RULE'] = '/login'   
+        #  change the default '/auth' endpoint to '/login'
+    # app.config['JWT_AUTH_URL_RULE'] = '/login' 
         # config JWT to expire within half an hour
     #app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1800)
 
@@ -46,8 +46,17 @@ def create_tables():
     """create the tables before the first request. it uses the model imports e.g resources.store"""
     db.create_all()
 
+
 jwt = JWTManager(app)  # doesn't create auth end point automatically
 
+@jwt.user_claims_loader
+def add_claims_to_jwt(identity):
+    """runs each time we run the login endpoint, adds data to th """
+    # check if user id is 1. ideally we should read from db or a config file instead of hardcoding the id 1
+    print("identity is {}".format(identity))
+    if identity == 1:
+        return {'is_admin':True}
+    return {'is_admin':True}
 
 api.add_resource(Store, '/store/<string:name>')
 api.add_resource(StoreList, '/stores')
@@ -55,7 +64,7 @@ api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
 api.add_resource(UserRegister, '/register')
 api.add_resource(User, '/user/<int:user_id>')
-
+api.add_resource(UserLogin, '/login')  # we can call the endpoint 'auth' if we want
 
 
 if __name__ == '__main__':
