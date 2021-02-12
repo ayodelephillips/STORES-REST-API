@@ -1,5 +1,11 @@
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import jwt_required, get_jwt_claims
+from flask_jwt_extended import (
+    jwt_required, 
+    get_jwt_claims, 
+    jwt_optional, 
+    get_jwt_identity,
+    fresh_jwt_required
+)
 from models.item import ItemModel
 
 class Item(Resource):
@@ -24,7 +30,7 @@ class Item(Resource):
         """
         get the item using name. where name is unique
         we do not do jsonify(dict) here because flask restful does it automatically for us.
-        so we return a dictionary.
+        so we return a dictionary. jwt_required ensures there is a valid access token present
         """
 
         item = ItemModel.find_by_name(name)
@@ -32,7 +38,7 @@ class Item(Resource):
             return item.json()  # call the json method inside itemmodel
         return {'message': 'Item not found'}, 404
 
-
+    @fresh_jwt_required  # needs a fresh access token to post
     def post(self, name):
         """
         we add item to list of items as long as no another item with same name exists
@@ -87,6 +93,15 @@ class Item(Resource):
         return item.json()
 
 class ItemList(Resource):
+    @jwt_optional   # allows endpoint return all data if user's logged in and return some data if the user isn't logged in
     def get(self):
-        """get  a list of all the items """#
-        return {'items':[item.json() for item in ItemModel.find_all()]}
+        """get  a list of all the items. if user is logged in, returns all the items, if not it returns only item names"""
+        user_id = get_jwt_identity()  # the jwt_optional allows us get the jwt identity of user id. It returns None if there's no id 
+        items =  [item.json() for item in ItemModel.find_all()]
+        print("user id is {}".format(user_id))
+        if user_id:
+            return{'items':items},200
+        return {
+            'items': [item['name'] for item in items],
+            'message': 'More data available if you log in'
+        },200
