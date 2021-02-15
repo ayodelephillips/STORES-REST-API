@@ -49,10 +49,10 @@ api = Api(app)  # allows us add resources, and state whether we can GET or POST 
 
 
 # this will be hashed before deployment
-@app.before_first_request
-def create_tables():
-    """create the tables before the first request. it uses the model imports e.g resources.store"""
-    db.create_all()
+# @app.before_first_request
+# def create_tables():
+#     """create the tables before the first request. it uses the model imports e.g resources.store"""
+#     db.create_all()
 
 
 jwt = JWTManager(app)  # doesn't create auth end point automatically
