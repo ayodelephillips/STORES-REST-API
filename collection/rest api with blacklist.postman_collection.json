@@ -1,0 +1,511 @@
+{
+	"info": {
+		"_postman_id": "9969b812-6559-4c26-9f6e-3156f18a022e",
+		"name": "rest api with blacklist",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SECTION 6",
+			"item": [
+				{
+					"name": "/items",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/items",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"items"
+							]
+						},
+						"description": "This should return a list of items each in json format"
+					},
+					"response": []
+				},
+				{
+					"name": "/item/<name>",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"karen\",\r\n    \"password\": \"asdf\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/item/blanket",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"item",
+								"blanket"
+							]
+						},
+						"description": "This should return a specific item uniquely identified by its name"
+					},
+					"response": []
+				},
+				{
+					"name": "/item/<name>",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"tests[\"Response time is less than 200ms\"] = responseTime<200;  // response time must be less than 200ms\r",
+									"\r",
+									"tests[\"Status code is 200\"] = responseCode.code==201;  // check if status code is 200"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"price\":25.99,\r\n    \"store_id\":2\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/item/blanket",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"item",
+								"blanket"
+							]
+						},
+						"description": "This should create a new item. it fails if the item already exists"
+					},
+					"response": []
+				},
+				{
+					"name": "/item/<name>",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/item/blanket",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"item",
+								"blanket"
+							]
+						},
+						"description": "This should delete a specific item uniquely identified by its name"
+					},
+					"response": []
+				},
+				{
+					"name": "/item/<name>",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"price\":44.90,\r\n    \"store_id\": 2,\r\n    \"another\":\"another one. this is removed by reqparse\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/item/table",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"item",
+								"table"
+							]
+						},
+						"description": "This should create a new item at the said price. \r\nIf the item exists already, then it updates the item price value"
+					},
+					"response": []
+				},
+				{
+					"name": "/login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// js code which runs after request has been processed by server and sent back to us. we can change value token, get\r",
+									"//how many mins request takes and so on#\r",
+									"var jsonData = JSON.parse(responseBody);  // parse server response to json\r",
+									"tests[\"Check JWT Token exists\"] = jsonData.access_token !== undefined;  // check if the access token is undefined\r",
+									"tests[\"Check refresh Token Exists\"] = jsonData.refresh_token !== undefined;  // check if the refresh token is undefined\r",
+									"\r",
+									"// add refresh and access tokens to the postman environment\r",
+									"pm.environment.set(\"jwt_token\", jsonData.access_token);\r",
+									"pm.environment.set(\"refresh_token\", jsonData.refresh_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n    \"username\": \"user2\",\r\n    \"password\": \"asdf\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "send an authentication request.\r\n\r\nthe jwt extension generates the endpoint"
+					},
+					"response": []
+				},
+				{
+					"name": "/register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n    \"username\": \"user3\",\r\n    \"password\": \"asdf\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"register"
+							]
+						},
+						"description": "send an authentication request.\r\n\r\nthe jwt extension generates the endpoint"
+					},
+					"response": []
+				},
+				{
+					"name": "/store/<name>",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"karen\",\r\n    \"password\": \"asdf\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/store/test2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"store",
+								"test2"
+							]
+						},
+						"description": "This should return a specific store uniquely identified by its name. no 2 stores may have same name"
+					},
+					"response": []
+				},
+				{
+					"name": "/store/<name>",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"karen\",\r\n    \"password\": \"asdf\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/store/test2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"store",
+								"test2"
+							]
+						},
+						"description": "This will create a store"
+					},
+					"response": []
+				},
+				{
+					"name": "/store/<name>",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"karen\",\r\n    \"password\": \"asdf\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/store/test2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"store",
+								"test2"
+							]
+						},
+						"description": "This will delete a store"
+					},
+					"response": []
+				},
+				{
+					"name": "/stores",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"karen\",\r\n    \"password\": \"asdf\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/stores",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"stores"
+							]
+						},
+						"description": "This should return a list of stores"
+					},
+					"response": []
+				},
+				{
+					"name": "/user/<user_id>",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"karen\",\r\n    \"password\": \"asdf\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"2"
+							]
+						},
+						"description": "This should return a specific user uniquely identified by its user id"
+					},
+					"response": []
+				},
+				{
+					"name": "/user/<user_id>",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"karen\",\r\n    \"password\": \"asdf\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"1"
+							]
+						},
+						"description": "This should return a specific user uniquely identified by its user id"
+					},
+					"response": []
+				},
+				{
+					"name": "/refresh",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{refresh_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/refresh",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"refresh"
+							]
+						},
+						"description": "Refresh the jwt access_token"
+					},
+					"response": []
+				},
+				{
+					"name": "/logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/logout",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"logout"
+							]
+						},
+						"description": "Log the user out by ensuring his current jwt token id is blacklisted"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
